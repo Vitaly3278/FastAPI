@@ -25,4 +25,3 @@ async def create_user(user_create: UserCreate) -> User:
 @app.get("/tasks", response_model=list[User])
 async def list_tasks() -> list[User]:
     return users
-

@@ -51,3 +51,4 @@ async def delete_message(message_id: int) -> dict:
 async def delete_messages() -> dict:
     messages_db.clear()
     return {"detail": "All messages deleted!"}
+
