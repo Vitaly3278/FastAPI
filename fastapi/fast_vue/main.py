@@ -8,14 +8,14 @@ app = FastAPI(title = "Message CRUD")
 app.add_middleware(
     CORSMiddleware, 
     allow_origins=["*"],    # Разрешает запросы с любых доменов
-    allow_credentials=True, #Разрешает отправку куки
-    allow_methods=["*"],    # Разрешает все HTTP-методы
-    allow_headers=["*"],    # Разрешает любые заголовкиРазрешает любые заголовки
+    allow_credentials=True,  # Разрешает отправку куки
+    allow_methods=["*"],     # Разрешает все HTTP-методы
+    allow_headers=["*"],     # Разрешает любые заголовки
 )
 
 # Модель Pydantic для создания нового сообщения
 class MessageCreate(BaseModel):
-    content : str
+    content: str
 
 # Модель Pydantic для частичного обновления сообщения
 class MessageUpdate(BaseModel):
@@ -23,11 +23,11 @@ class MessageUpdate(BaseModel):
 
 # Модель Pydantic для представления сообщения в ответах API
 class Message(BaseModel):
-    id : int
-    content : str
+    id: int
+    content: str
 
 # Простая "база данных" в памяти для хранения сообщений
-messages_db : list[Message] = [Message(id=0, content="First post in Fasapi")]
+messages_db: list[Message] = [Message(id=0, content="First post in FastAPI")]
 
 # Функция для генерации следующего ID
 def next_id() -> int:
@@ -41,26 +41,26 @@ def get_index(message_id: int) -> int:
     return -1
 
 # Эндпоинт для получения одного сообщения
-@app.get("/messages/{message_id}, response_model=Message")
-async def get_message(message_id : int) -> Message:
+@app.get("/messages/{message_id}", response_model=Message)
+async def get_message(message_id: int) -> Message:
     idx = get_index(message_id)
     if idx < 0:
         raise HTTPException(status_code=404, detail="Message not found")
     return messages_db[idx]
 
 # Эндпоинт для получения списка сообщений
-@app.get("/messages", response_model=Message, status_code=201)
+@app.get("/messages", response_model=list[Message])
 async def list_messages() -> list[Message]:
     return messages_db
 
 # Эндпоинт для создания сообщения
 @app.post("/messages", response_model=Message, status_code=201)
-async def create_message(payload : MessageCreate) -> Message:
+async def create_message(payload: MessageCreate) -> Message:
     m = Message(id=next_id(), content=payload.content)
     messages_db.append(m)
     return m
 
-# Эндпоинт для частичного обновления сообщения
+## Эндпоинт для частичного обновления сообщения
 @app.patch("/messages/{message_id}", response_model=Message)
 async def update_message(message_id: int, payload: MessageUpdate) -> Message:
     # Ищем индекс сообщения по ID
@@ -98,10 +98,4 @@ async def delete_message(message_id: int):
     
     # Удаляем сообщение из базы данных
     messages_db.pop(idx)
-
-
-
-
-
-
 
